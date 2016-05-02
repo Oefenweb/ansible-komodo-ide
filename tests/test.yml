@@ -1,0 +1,7 @@
+# test file for komodo-ide
+---
+- hosts: localhost
+  connection: local
+  sudo: true
+  roles:
+    - ../../

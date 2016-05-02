@@ -1,0 +1,87 @@
+# tasks file for komodo-ide
+---
+- name: install dependencies
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: true
+    cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
+  with_items: "{{ komodo_ide_dependencies }}"
+  tags:
+    - configuration
+    - komodo-ide
+    - komodo-ide-dependencies
+
+- name: create (download) directory
+  file:
+    path: "{{ komodo_ide_downloads_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - configuration
+    - komodo-ide
+    - komodo-ide-download
+
+- name: download
+  get_url:
+    url: "http://downloads.activestate.com/Komodo/releases/{{ komodo_ide_version }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}.tar.gz"
+    dest: "{{ komodo_ide_downloads_path }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}.tar.gz"
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - configuration
+    - komodo-ide
+    - komodo-ide-download
+
+- name: create (extract) directory
+  file:
+    path: "{{ komodo_ide_downloads_path }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - configuration
+    - komodo-ide
+    - komodo-ide-install
+
+- name: extract
+  unarchive:
+    src: "{{ komodo_ide_downloads_path }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}.tar.gz"
+    dest: "{{ komodo_ide_downloads_path }}/"
+    owner: root
+    group: root
+    mode: 0755
+    creates: "{{ komodo_ide_downloads_path }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}/install.sh"
+    copy: false
+  register: unarchive
+  tags:
+    - configuration
+    - komodo-ide
+    - komodo-ide-extract
+
+- name: install
+  command: ./install.sh --install-dir {{ komodo_ide_install_prefix }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}
+  args:
+    chdir: "{{ komodo_ide_downloads_path }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}"
+  when: unarchive | changed
+  tags:
+    - configuration
+    - komodo-ide
+    - komodo-ide-install
+    - komodo-ide-install-dir
+
+- name: install
+  file:
+    src: "{{ komodo_ide_install_prefix }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}/bin/komodo"
+    dest: /usr/local/bin/komodo
+    state: link
+    force: true
+  tags:
+    - configuration
+    - komodo-ide
+    - komodo-ide-install
+    - komodo-ide-install-symlink
