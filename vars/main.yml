@@ -1,0 +1,9 @@
+# vars file for komodo-ide
+---
+komodo_ide_downloads_path: /var/lib/ansible/komodo-ide/downloads
+komodo_ide_install_path: "{{ komodo_ide_install_prefix }}/packer-{{ komodo_ide_version }}"
+komodo_ide_machine_map:
+  i686: x86
+  i386: x86
+  x86_64: x86_64
+  amd64: x86_64

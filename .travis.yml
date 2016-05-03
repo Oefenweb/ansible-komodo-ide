@@ -1,0 +1,79 @@
+---
+sudo: required
+dist: trusty
+
+language: python
+python: "2.7"
+
+env:
+  - ANSIBLE_VERSION=latest
+  - ANSIBLE_VERSION=2.0.2.0
+  - ANSIBLE_VERSION=2.0.1.0
+  - ANSIBLE_VERSION=2.0.0.2
+  - ANSIBLE_VERSION=2.0.0.1
+  - ANSIBLE_VERSION=2.0.0.0
+  - ANSIBLE_VERSION=1.9.6
+  - ANSIBLE_VERSION=1.9.5
+  - ANSIBLE_VERSION=1.9.4
+  - ANSIBLE_VERSION=1.9.3
+  - ANSIBLE_VERSION=1.9.2
+  - ANSIBLE_VERSION=1.9.1
+  - ANSIBLE_VERSION=1.9.0.1
+  - ANSIBLE_VERSION=1.8.4
+  - ANSIBLE_VERSION=1.8.3
+  - ANSIBLE_VERSION=1.8.2
+  - ANSIBLE_VERSION=1.8.1
+  - ANSIBLE_VERSION=1.8
+  - ANSIBLE_VERSION=1.7.2
+  - ANSIBLE_VERSION=1.7.1
+  - ANSIBLE_VERSION=1.7
+  - ANSIBLE_VERSION=1.6.9
+  - ANSIBLE_VERSION=1.6.8
+  - ANSIBLE_VERSION=1.6.7
+  - ANSIBLE_VERSION=1.6.6
+  - ANSIBLE_VERSION=1.6.5
+  - ANSIBLE_VERSION=1.6.4
+  - ANSIBLE_VERSION=1.6.3
+  - ANSIBLE_VERSION=1.6.2
+  - ANSIBLE_VERSION=1.6.10
+  - ANSIBLE_VERSION=1.6.1
+  - ANSIBLE_VERSION=1.6
+
+branches:
+  only:
+    - master
+
+matrix:
+  allow_failures:
+    # Idempotency test fails, see https://groups.google.com/forum/#!msg/ansible-project/jwYFl8zw8Qw/1yhSq86uFmYJ
+    - env: ANSIBLE_VERSION=1.8.2
+    - env: ANSIBLE_VERSION=1.8.1
+    - env: ANSIBLE_VERSION=1.8
+
+before_install:
+  - sudo apt-get update -qq
+
+install:
+  # Install Ansible.
+  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install --no-binary ansible ansible; else pip install --no-binary ansible ansible==$ANSIBLE_VERSION; fi
+
+script:
+  # Check the role/playbook's syntax.
+  - ansible-playbook -i tests/inventory tests/test.yml --syntax-check
+
+  # Run the role/playbook with ansible-playbook.
+  - ansible-playbook -i tests/inventory tests/test.yml -vvvv
+
+  # Run the role/playbook again, checking to make sure it's idempotent.
+  - >
+    ansible-playbook -i tests/inventory tests/test.yml
+    | grep -q 'changed=0.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
+
+notifications:
+  email: false
+  hipchat:
+    rooms:
+      secure: iFZY09ZcfsdbhhbyHIh4A3yjn/do7KVKs8PpXBHu3ieCawUrm0wBALwrA5ijNAVqbMVxegkQfPL44cuYGGX3HKFHVjK68Yb6tx/2jv9drK2vLqRV2q8bhAAxbUlWJLZYCybm2QhGKC8m6WCKoY3qMLFpJ/GemOCDI6O56NJjH+AOhXOvdJxc58Qj1gsaxxKsU8fMmQz17tgpACodVNmdMraJgIYObbPr3j+JzI4cg35TVaeGPiAcCGf+E8k2lPcX6fOIzpa7MPDV46tII3DzwCHzd2m9vQSVA16wHr9kUS0QXcWVKyRk5p5TOuS8+Zo5LJHXBoUkmoyYPipM0r77CLavTR5WlnikCgjn5P7PMrfT0JQnemInKFqfTfWpHKa7prBKZM3Xp1JX/3lt8Vpv7cFyYvva8D3gCJHPTzGVGKy/VHjD2axL3wGd271EiHngi4YOjT4hdtpKD1mYp4PWHKi7dUSVND47nNPTQcf8Qs6x/LBXOPRecOfHG3No1T7aZi6LK78W4zzWWcdLKRlSQbOyowDrq+eFjUiZthVGQhpcpWsbA8byhf/oxyPgPdPIKc3E0BAqJ4bvBEYb/psl+6b3m60NPr5Wife4FzDG3klb80CGlnQAoGWsurrLl/XmViOGlwlPeaOaWWSI/wi46YlQn+Gg21pRPHXc9h/ZOBg=
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
