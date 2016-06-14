@@ -1,6 +1,15 @@
 # tasks file for komodo-ide
 ---
 - name: create (download) directory
+  debug:
+    msg: "{{ komodo_ide_series }}"
+  failed_when: true
+  tags:
+    - configuration
+    - komodo-ide
+    - komodo-ide-download
+
+- name: create (download) directory
   file:
     path: "{{ komodo_ide_downloads_path }}"
     state: directory
