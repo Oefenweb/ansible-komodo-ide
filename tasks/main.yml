@@ -25,38 +25,22 @@
     - komodo-ide-download
 
 - name: extract
-  unarchive:
-    src: "{{ komodo_ide_downloads_path }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}.tar.gz"
-    dest: "{{ komodo_ide_downloads_path }}/"
-    owner: root
-    group: root
-    mode: 0755
+  command: >
+    tar -xzvf "{{ komodo_ide_downloads_path }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}.tar.gz"
+  args:
+    chdir: "{{ komodo_ide_downloads_path }}"
     creates: "{{ komodo_ide_downloads_path }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}/install.sh"
-    copy: false
-  register: unarchive
+  register: _unarchive
   tags:
     - configuration
     - komodo-ide
     - komodo-ide-extract
 
-- name: chown
-  file:
-    path: "{{ komodo_ide_downloads_path }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}"
-    state: directory
-    owner: root
-    group: root
-    recurse: true
-  when: unarchive | changed and (ansible_version is not defined or ansible_version.full | version_compare('1.9', '<'))
-  tags:
-    - configuration
-    - komodo-ide
-    - komodo-ide-chown
-
 - name: install
   command: ./install.sh --install-dir {{ komodo_ide_install_prefix }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}
   args:
     chdir: "{{ komodo_ide_downloads_path }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}"
-  when: unarchive | changed
+  when: _unarchive | changed
   tags:
     - configuration
     - komodo-ide
