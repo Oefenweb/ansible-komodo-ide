@@ -50,13 +50,6 @@ branches:
   only:
     - master
 
-matrix:
-  allow_failures:
-    # Idempotency test fails, see https://groups.google.com/forum/#!msg/ansible-project/jwYFl8zw8Qw/1yhSq86uFmYJ
-    - env: ANSIBLE_VERSION=1.8.2
-    - env: ANSIBLE_VERSION=1.8.1
-    - env: ANSIBLE_VERSION=1.8
-
 before_install:
   - sudo apt-get update -qq
 
@@ -79,7 +72,7 @@ script:
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
 
-  - if [ "$ANSIBLE_VERSION" = "latest" ]; then ansible-lint || true; fi
+  - if [ "$ANSIBLE_VERSION" = "latest" ]; then ansible-lint tests/test.yml || true; fi
 
 notifications:
   email: false
