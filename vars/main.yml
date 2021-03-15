@@ -1,4 +1,4 @@
-# vars file for komodo-ide
+# vars file
 ---
 komodo_ide_series: "{{ komodo_ide_version.split('.')[0] }}.x"
 komodo_ide_downloads_url: "http://downloads.activestate.com/Komodo/releases/archive/{{ komodo_ide_series }}/{{ komodo_ide_version }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}.tar.gz"

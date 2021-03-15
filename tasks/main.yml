@@ -1,4 +1,4 @@
-# tasks file for komodo-ide
+# tasks file
 ---
 - name: create (download) directory
   file:
