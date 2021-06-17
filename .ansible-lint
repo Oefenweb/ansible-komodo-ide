@@ -1,2 +1,4 @@
-skip_list:
-  - '204'
+---
+warn_list:
+  - '106'
+  - no-handler
