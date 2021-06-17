@@ -1,7 +1,7 @@
 ## komodo-ide
 
-[![Build Status](https://travis-ci.org/Oefenweb/ansible-komodo-ide.svg?branch=master)](https://travis-ci.org/Oefenweb/ansible-komodo-ide)
-[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-komodo--ide-blue.svg)](https://galaxy.ansible.com/Oefenweb/ansible-komodo-ide)
+[![CI](https://github.com/Oefenweb/ansible-komodo-ide/workflows/CI/badge.svg)](https://github.com/Oefenweb/ansible-komodo-ide/actions?query=workflow%3ACI)
+[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-komodo--ide-blue.svg)](https://galaxy.ansible.com/Oefenweb/komodo_ide)
 
 Set up [Komodo IDE](http://komodoide.com/) by ActiveState in Debian-like systems.
 
