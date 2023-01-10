@@ -1,7 +1,7 @@
 # tasks file
 ---
 - name: create (download) directory
-  file:
+  ansible.builtin.file:
     path: "{{ komodo_ide_downloads_path }}"
     state: directory
     owner: root
@@ -13,7 +13,7 @@
     - komodo-ide-download
 
 - name: download
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ komodo_ide_downloads_url }}"
     dest: "{{ komodo_ide_downloads_path }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}.tar.gz"
     owner: root
@@ -25,7 +25,7 @@
     - komodo-ide-download
 
 - name: extract
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ komodo_ide_downloads_path }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}.tar.gz"
     dest: "{{ komodo_ide_downloads_path }}/"
     owner: root
@@ -40,7 +40,7 @@
     - komodo-ide-extract
 
 - name: install
-  command: >
+  ansible.builtin.command: >
     ./install.sh --install-dir {{ komodo_ide_install_prefix }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}
   args:
     chdir: "{{ komodo_ide_downloads_path }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}"
@@ -52,7 +52,7 @@
     - komodo-ide-install-dir
 
 - name: install (symlink)
-  file:
+  ansible.builtin.file:
     src: "{{ komodo_ide_install_prefix }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}/bin/komodo"
     dest: /usr/local/bin/komodo
     state: link
