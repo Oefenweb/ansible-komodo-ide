@@ -25,7 +25,7 @@ None
 ---
 - hosts: all
   roles:
-    - komodo-ide
+    - oefenweb.komodo-ide
 ```
 
 #### License
