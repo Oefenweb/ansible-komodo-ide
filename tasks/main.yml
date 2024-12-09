@@ -6,7 +6,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: '0755'
   tags:
     - configuration
     - komodo-ide
@@ -30,7 +30,7 @@
     dest: "{{ komodo_ide_downloads_path }}/"
     owner: root
     group: root
-    mode: 0755
+    mode: '0755'
     creates: "{{ komodo_ide_downloads_path }}/Komodo-IDE-{{ komodo_ide_version }}-{{ komodo_ide_build }}-linux-{{ komodo_ide_machine_map[ansible_machine] }}/install.sh"
     copy: false
   register: _unarchive
